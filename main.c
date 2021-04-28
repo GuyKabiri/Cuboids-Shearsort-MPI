@@ -14,7 +14,6 @@
 #define OUTPUT_FILE_NAME "../src/result.dat"
 
 #define ROOT 0
-#define NUM_DIMS 2
 
 
 int main(int argc, char* argv[])
@@ -70,6 +69,15 @@ int main(int argc, char* argv[])
 			exit(-1);
 		}
 
+		if (size != num_processes)
+		{
+			printf("Number of processes is different from number of cuboids in the file\n");
+			free(arr);
+			MPI_Type_free(&mpi_cuboid_type);
+			MPI_Abort(MPI_COMM_WORLD, 2);
+			exit(-1);
+		}
+
 		print_cuboids_arr_as_mat(arr, dim, dim);
 		printf("\n");
 	}
@@ -107,7 +115,7 @@ int main(int argc, char* argv[])
 		}
 
 		//	collect the values by snake shape
-		collect_values(sorted, arr, num_processes);
+		collect_values(sorted, arr, num_processes, comm_2d);
 
 		print_cuboids_arr_as_mat(arr, dim, dim);
 		printf("\n");

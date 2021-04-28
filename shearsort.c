@@ -35,32 +35,68 @@ void shearsort(int num_proc, int row, int col, Cuboid* my_data, MPI_Datatype dat
 }
 
 
-Cuboid* collect_values(Cuboid* sorted, Cuboid* arr, int size)
+Cuboid* collect_values(Cuboid* sorted, Cuboid* arr, int size, MPI_Comm comm2d)
 {
 	int dim = sqrt(size);
 
-	int arrIdx = 0;
+	int rank = 0;
 	int sortedIdx = 0;
+	int coords[NUM_DIMS];
 
 	for (int i = 0; i < dim; i++)
 	{
+		coords[0] = i;
+
 		if (i % 2 == 0)
 		{
 			for (int j = 0; j < dim; j++)
 			{
-				arrIdx = i * dim + j;
-				sorted[sortedIdx++] = arr[arrIdx];
+				coords[1] = j;
+				MPI_Cart_rank(comm2d, coords, &rank);
+				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 		else
 		{
 			for (int j = dim - 1; j >= 0; j--)
 			{
-				arrIdx = i * dim + j;
-				sorted[sortedIdx++] = arr[arrIdx];
+				coords[1] = j;
+				MPI_Cart_rank(comm2d, coords, &rank);
+				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 	}
 
 	return sorted;
 }
+
+/*
+ * when creating mpi cartesian, it might create a matrix like shown below (the number represent the processes rank):
+ *
+ * |  0 |  1 |  2 |  3 |
+ * |  4 |  5 |  6 |  7 |
+ * |  8 |  9 | 10 | 11 |
+ * | 12 | 13 | 14 | 15 |
+ *
+ *	but, it might create a matrix as shows below as well:
+ *
+ * | 14 |  1 | 13 |  8 |
+ * |  4 | 11 |  6 |  7 |
+ * | 12 |  9 | 10 |  5 |
+ * |  3 |  2 |  0 | 15 |
+ *
+ * 	when using MPI_Gather, all the values are placed in the array order by their rank as:
+ *
+ *	|  0 |  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 |
+ *
+ *	and not like below:
+ *
+ *	| 14 |  1 | 13 |  8 |  4 | 11 |  6 |  7 | 12 |  9 | 10 |  5 |  3 |  2 |  0 | 15 |
+ *
+ *
+ *	so when running through the array to collect the values by `snake` shape
+ *	the values should be collected by their cartesian order
+ *	it means that it is necessary to calculate the rank of the process by its cartesian values
+ *	as a process with rank 14 has cartesian values of (0, 0)
+ *	and process with rank 0 has cartesian values of (3, 2)
+ * */
