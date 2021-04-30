@@ -19,7 +19,7 @@ typedef struct cuboid {
 Cuboid* read_cuboids_from_file(FILE* file, int* size, int* order);
 Cuboid* read_cuboid_from_file(FILE* file, Cuboid* readInto);
 Cuboid* write_cuboids_ids_to_file(FILE* file, Cuboid* arr, int size);
-double calc_area(Cuboid* c);
+double calc_surface_area(Cuboid* c);
 int compare_cuboids(Cuboid* c1, Cuboid* c2);
 void get_min_cuboid(Cuboid* c1, Cuboid* c2);
 void get_max_cuboid(Cuboid* c1, Cuboid* c2);

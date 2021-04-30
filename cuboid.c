@@ -64,18 +64,21 @@ Cuboid* write_cuboids_ids_to_file(FILE* file, Cuboid* arr, int size)
 
 
 //	calculate the area of a cubiod
-double calc_area(Cuboid* c)
+double calc_surface_area(Cuboid* c)
 {
-	double area = (c->width) * (c->height) * (c->depth);
-	return area;
+	double side1 = c->width * c->height;
+	double side2 = c->height * c->depth;
+	double side3 = c->width * c->depth;
+	double surface_area = 2 * (side1 + side2 + side3);
+	return surface_area;
 }
 
 
 //	returns value greater than 0 if c1 is greater, smaller than 0 if c1 if smaller, otherwise 0
 int compare_cuboids(Cuboid* c1, Cuboid* c2)
 {
-	double area1 = calc_area(c1);
-	double area2 = calc_area(c2);
+	double area1 = calc_surface_area(c1);
+	double area2 = calc_surface_area(c2);
 	
 	if (area1 > area2)
 		return 1;
@@ -135,7 +138,7 @@ void print_cuboids_arr(Cuboid* arr, int size)
 {
 	for (int i = 0; i < size; i++)
 	{
-		printf("(%2d, %.3lf)\n", arr[i].id, calc_area(&arr[i]));
+		printf("(%2d, %.3lf)\n", arr[i].id, calc_surface_area(&arr[i]));
 	}
 }
 
@@ -147,7 +150,7 @@ void print_cuboids_arr_as_mat(Cuboid* arr, int rows, int cols)
 	{
 		for (int j = 0; j < cols; j++, idx++)
 		{
-			printf("(%2d, %.3lf)", arr[idx].id, calc_area(&arr[idx]));
+			printf("(%2d, %.3lf)", arr[idx].id, calc_surface_area(&arr[idx]));
 			if (j < cols - 1)
 				printf(", ");
 		}
