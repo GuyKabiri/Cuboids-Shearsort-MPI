@@ -4,23 +4,28 @@
 #include "odd_even_sort.h"
 
 //	if process is in the edge of the array, it's neighbor should be a negative number
-void odd_even_sort(int num_proc, int location, int left, int right, Orientation orientation, Cuboid* my_data, MPI_Datatype data_type, MPI_Comm comm)
+void odd_even_sort(int num_proc, int location, int left, int right, Orientation orientation,
+					void* my_data,
+					MPI_Datatype data_type,
+					MPI_Comm comm,
+					void (*min)(void*, void*),
+					void (*max)(void*, void*))
 {
 	MPI_Status status;
 
 	//	Default orientation is ASCENDING
-	void (*f1)(Cuboid*, Cuboid*) = &get_min_cuboid;
-	void (*f2)(Cuboid*, Cuboid*) = &get_max_cuboid;
+	void (*f1)(void*, void*) = min;
+	void (*f2)(void*, void*) = max;
 
 	if (orientation == DESCENDING)
 	{
-		f1 = get_max_cuboid;
-		f2 = get_min_cuboid;
+		f1 = max;
+		f2 = min;
 	}
 
 	Cuboid other_data;
 	int other_source;
-	void (*func)(Cuboid*, Cuboid*);
+	void (*func)(void*, void*);
 
 	for (int i = 0; i < num_proc; i++)
 	{

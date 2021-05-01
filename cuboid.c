@@ -90,7 +90,7 @@ int compare_cuboids(Cuboid* c1, Cuboid* c2)
 
 
 //	will save the min cuboid in c1
-void get_min_cuboid(Cuboid* c1, Cuboid* c2)
+void get_min_cuboid(void* c1, void* c2)
 {
 	if (compare_cuboids(c1, c2) > 0)
 		swap_cuboids(c1, c2);	//	c2 smaller than c1
@@ -98,7 +98,7 @@ void get_min_cuboid(Cuboid* c1, Cuboid* c2)
 
 
 ///	will save the max cuboid in c1
-void get_max_cuboid(Cuboid* c1, Cuboid* c2)
+void get_max_cuboid(void* c1, void* c2)
 {
 	if (compare_cuboids(c1, c2) < 0)
 		swap_cuboids(c1, c2);	//	c2 bigger than c1

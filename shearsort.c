@@ -1,10 +1,15 @@
 //	Guy Kabiri
 //	312252224
 
+#include <string.h>
 #include <math.h>
 #include "shearsort.h"
 
-void shearsort(int num_proc, int row, int col, Cuboid* my_data, Orientation orientation, MPI_Datatype data_type, MPI_Comm comm)
+void shearsort(int num_proc, int row, int col, void* my_data, Orientation orientation,
+				MPI_Datatype data_type,
+				MPI_Comm comm,
+				void (*min)(void*, void*),
+				void (*max)(void*, void*))
 {
 	int dim = sqrt(num_proc);
 	int num_iterations = 2 * ceil(log2(num_proc)) + 1;
@@ -20,10 +25,6 @@ void shearsort(int num_proc, int row, int col, Cuboid* my_data, Orientation orie
 			MPI_Cart_shift(comm, 1, 1, &left, &right);
 
 			//	if even row, sort ASCENDING, else DESCENDING
-//			even_odd_orientation = orientation ?
-//								(row % 2 == 0) ? ASCENDING : DESCENDING
-//										:
-//								(row % 2 == 0) ? DESCENDING : ASCENDING;
 			if (orientation == DESCENDING)
 				even_odd_orientation = (row % 2 == 0) ? DESCENDING : ASCENDING;
 			else
@@ -37,39 +38,45 @@ void shearsort(int num_proc, int row, int col, Cuboid* my_data, Orientation orie
 
 			even_odd_orientation	= orientation;
 		}
-		odd_even_sort(dim, location, left, right, even_odd_orientation, my_data, data_type, comm);
+		odd_even_sort(dim, location, left, right, even_odd_orientation, my_data, data_type, comm, min, max);
 	}
 }
 
 
-Cuboid* collect_values(Cuboid* sorted, Cuboid* arr, int size, MPI_Comm comm2d)
+int* collect_values(void* sorted, void* arr, size_t type_size, int rows, int cols, MPI_Comm comm2d)
 {
-	int dim = sqrt(size);
-
 	int rank = 0;
 	int sortedIdx = 0;
 	int coords[NUM_DIMS];
 
-	for (int i = 0; i < dim; i++)
+	for (int i = 0; i < rows; i++)
 	{
 		coords[0] = i;
 
 		if (i % 2 == 0)
 		{
-			for (int j = 0; j < dim; j++)
+			for (int j = 0; j < cols; j++)
 			{
 				coords[1] = j;
 				MPI_Cart_rank(comm2d, coords, &rank);
-				sorted[sortedIdx++] = arr[rank];
+				void* copy_to = sorted + (sortedIdx * type_size);
+				void* copy_from = arr + (rank * type_size);
+				memcpy(copy_to, copy_from, type_size);
+				sortedIdx++;
+//				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 		else
 		{
-			for (int j = dim - 1; j >= 0; j--)
+			for (int j = cols - 1; j >= 0; j--)
 			{
 				coords[1] = j;
 				MPI_Cart_rank(comm2d, coords, &rank);
-				sorted[sortedIdx++] = arr[rank];
+				void* copy_to = sorted + (sortedIdx * type_size);
+				void* copy_from = arr + (rank * type_size);
+				memcpy(copy_to, copy_from, type_size);
+				sortedIdx++;
+//				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 	}
