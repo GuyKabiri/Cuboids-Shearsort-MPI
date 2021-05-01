@@ -6,8 +6,8 @@
 #include "shearsort.h"
 
 void shearsort(int num_proc, int row, int col, void* my_data, Orientation orientation,
-				MPI_Datatype data_type,
-				MPI_Comm comm,
+				MPI_Datatype* data_type,
+				MPI_Comm* comm,
 				void (*min)(void*, void*),
 				void (*max)(void*, void*))
 {
@@ -22,7 +22,7 @@ void shearsort(int num_proc, int row, int col, void* my_data, Orientation orient
 		if (i % 2 == 0)	//	even iteration
 		{				//	each row is sorted, the orientation depend on if it is even or odd
 			location 	= col;		//	process location in this row
-			MPI_Cart_shift(comm, 1, 1, &left, &right);
+			MPI_Cart_shift(*comm, 1, 1, &left, &right);
 
 			//	if even row, sort ASCENDING, else DESCENDING
 			if (orientation == DESCENDING)
@@ -34,7 +34,7 @@ void shearsort(int num_proc, int row, int col, void* my_data, Orientation orient
 		else	//	odd iteration
 		{		//	each column is sorted in ascending orientation
 			location 	= row;		//	process location in this column
-			MPI_Cart_shift(comm, 0, 1, &left, &right);
+			MPI_Cart_shift(*comm, 0, 1, &left, &right);
 
 			even_odd_orientation	= orientation;
 		}
@@ -43,7 +43,7 @@ void shearsort(int num_proc, int row, int col, void* my_data, Orientation orient
 }
 
 
-int* collect_values(void* sorted, void* arr, size_t type_size, int rows, int cols, MPI_Comm comm2d)
+int* collect_values(void* sorted, void* arr, size_t type_size, int rows, int cols, MPI_Comm* comm2d)
 {
 	int rank = 0;
 	int sortedIdx = 0;
@@ -58,12 +58,11 @@ int* collect_values(void* sorted, void* arr, size_t type_size, int rows, int col
 			for (int j = 0; j < cols; j++)
 			{
 				coords[1] = j;
-				MPI_Cart_rank(comm2d, coords, &rank);
+				MPI_Cart_rank(*comm2d, coords, &rank);
 				void* copy_to = sorted + (sortedIdx * type_size);
 				void* copy_from = arr + (rank * type_size);
 				memcpy(copy_to, copy_from, type_size);
 				sortedIdx++;
-//				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 		else
@@ -71,12 +70,11 @@ int* collect_values(void* sorted, void* arr, size_t type_size, int rows, int col
 			for (int j = cols - 1; j >= 0; j--)
 			{
 				coords[1] = j;
-				MPI_Cart_rank(comm2d, coords, &rank);
+				MPI_Cart_rank(*comm2d, coords, &rank);
 				void* copy_to = sorted + (sortedIdx * type_size);
 				void* copy_from = arr + (rank * type_size);
 				memcpy(copy_to, copy_from, type_size);
 				sortedIdx++;
-//				sorted[sortedIdx++] = arr[rank];
 			}
 		}
 	}

@@ -6,8 +6,8 @@
 //	if process is in the edge of the array, it's neighbor should be a negative number
 void odd_even_sort(int num_proc, int location, int left, int right, Orientation orientation,
 					void* my_data,
-					MPI_Datatype data_type,
-					MPI_Comm comm,
+					MPI_Datatype* data_type,
+					MPI_Comm* comm,
 					void (*min)(void*, void*),
 					void (*max)(void*, void*))
 {
@@ -62,7 +62,7 @@ void odd_even_sort(int num_proc, int location, int left, int right, Orientation 
 //			MPI_Send(my_data, 1, data_type, other_source, 0, comm);
 //			MPI_Recv(other_data, 1, data_type, other_source, 0, comm, &status);
 
-			MPI_Sendrecv(my_data, 1, data_type, other_source, 0, &other_data, 1, data_type, other_source, 0, comm, &status);
+			MPI_Sendrecv(my_data, 1, *data_type, other_source, 0, &other_data, 1, *data_type, other_source, 0, *comm, &status);
 
 			func(my_data, &other_data);
 		}

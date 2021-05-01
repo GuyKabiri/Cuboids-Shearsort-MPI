@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 	}
 
 	//perform shearsort of the cuboids array
-	shearsort(num_processes, my_coords[0], my_coords[1], &my_cuboid, orientation, mpi_cuboid_type, comm_2d, &get_min_cuboid, &get_max_cuboid);
+	shearsort(num_processes, my_coords[0], my_coords[1], &my_cuboid, orientation, &mpi_cuboid_type, &comm_2d, &get_min_cuboid, &get_max_cuboid);
 
 	//	Gather back all the cuboids to the ROOT process
 	MPI_Gather(&my_cuboid, 1, mpi_cuboid_type, arr, 1, mpi_cuboid_type, ROOT, MPI_COMM_WORLD);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
 		}
 
 		//	collect the values by snake shape
-		collect_values(sorted, arr, sizeof(Cuboid), dims[0], dims[1], comm_2d);
+		collect_values(sorted, arr, sizeof(Cuboid), dims[0], dims[1], &comm_2d);
 
 		printf("After sorting:\n");
 		print_cuboids_arr_as_mat(arr, dims[0], dims[1]);

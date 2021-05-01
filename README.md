@@ -10,7 +10,7 @@ The cuboids are beign sorted by the volum of each, or by the width if the volum 
 Each process gets a cuboid by `MPI_Scatter` and returns its value in the end of the algorithm with `MPI_Gather`.
 
 ##  Shearsort Iterations
-This algorithm sorting an array of `nXn` values with `nXn` processes after $log(n)$ iterations, each iteration is $`O(n)`$ complexity, (in this case $`n=\sqrt{n}`$) so the final complexity time is $`O(\sqrt{n}log(n))`$.
+This algorithm sorting an array of `nXn` values with `nXn` processes after $log(n)$ iterations, each iteration is $O(n)$ complexity, (in this case $n=\sqrt{n}$) so the final complexity time is $O(\sqrt{n}log(n))$.
 
 ### Initial
 The processes are beign cartesian ordered by `MPI_Cart_create`.
@@ -64,7 +64,7 @@ All that left is to collect the values by a sanke shape
 
 
 ##  Odd-Even Sort Iterations
-This algorithm sorting an array of `n` values with `n` processes after `n` iterations. Complexity time $`O(n)`$
+This algorithm sorting an array of `n` values with `n` processes after `n` iterations. Complexity time $O(n)$
 ### Initial
 The initial array will be as below.
 
