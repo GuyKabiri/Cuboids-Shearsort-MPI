@@ -108,22 +108,10 @@ void get_max_cuboid(Cuboid* c1, Cuboid* c2)
 //	swap between c1 and c2 values
 void swap_cuboids(Cuboid* c1, Cuboid* c2)
 {
-	Cuboid temp;
-
-	temp.id 	= c1->id;
-	temp.width 	= c1->width;
-	temp.height = c1->height;
-	temp.depth 	= c1->depth;
-
 	c1->id		= c2->id;
 	c1->width	= c2->width;
 	c1->height	= c2->height;
 	c1->depth	= c2->depth;
-
-	c2->id		= temp.id;
-	c2->width	= temp.width;
-	c2->height	= temp.height;
-	c2->depth	= temp.depth;
 }
 
 
@@ -138,7 +126,7 @@ void print_cuboids_arr(Cuboid* arr, int size)
 {
 	for (int i = 0; i < size; i++)
 	{
-		printf("(%2d, %.3lf)\n", arr[i].id, calc_surface_area(&arr[i]));
+		printf("(%2d, %6g)\n", arr[i].id, calc_surface_area(&arr[i]));
 	}
 }
 
@@ -150,7 +138,7 @@ void print_cuboids_arr_as_mat(Cuboid* arr, int rows, int cols)
 	{
 		for (int j = 0; j < cols; j++, idx++)
 		{
-			printf("(%2d, %.3lf)", arr[idx].id, calc_surface_area(&arr[idx]));
+			printf("(%2d, %6g)", arr[idx].id, calc_surface_area(&arr[idx]));
 			if (j < cols - 1)
 				printf(", ");
 		}

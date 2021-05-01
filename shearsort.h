@@ -9,7 +9,7 @@
 
 #define NUM_DIMS 2
 
-void shearsort(int num_proc, int row, int col, Cuboid* my_c, MPI_Datatype data_type, MPI_Comm comm);
+void shearsort(int num_proc, int row, int col, Cuboid* my_data, Orientation orientation, MPI_Datatype data_type, MPI_Comm comm);
 Cuboid* collect_values(Cuboid* sorted, Cuboid* arr, int size, MPI_Comm comm2d);
 
 #endif	//	__SHEARSORT_H__

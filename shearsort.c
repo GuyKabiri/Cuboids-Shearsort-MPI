@@ -4,13 +4,13 @@
 #include <math.h>
 #include "shearsort.h"
 
-void shearsort(int num_proc, int row, int col, Cuboid* my_data, MPI_Datatype data_type, MPI_Comm comm)
+void shearsort(int num_proc, int row, int col, Cuboid* my_data, Orientation orientation, MPI_Datatype data_type, MPI_Comm comm)
 {
 	int dim = sqrt(num_proc);
 	int num_iterations = 2 * ceil(log2(num_proc)) + 1;
 
 	int location, left, right;
-	Orientation orientation;
+	Orientation even_odd_orientation;
 
 	for (int i = 0; i < num_iterations; i++)
 	{
@@ -20,7 +20,14 @@ void shearsort(int num_proc, int row, int col, Cuboid* my_data, MPI_Datatype dat
 			MPI_Cart_shift(comm, 1, 1, &left, &right);
 
 			//	if even row, sort ASCENDING, else DESCENDING
-			orientation = (row % 2 == 0) ? ASCENDING : DESCENDING;
+//			even_odd_orientation = orientation ?
+//								(row % 2 == 0) ? ASCENDING : DESCENDING
+//										:
+//								(row % 2 == 0) ? DESCENDING : ASCENDING;
+			if (orientation == DESCENDING)
+				even_odd_orientation = (row % 2 == 0) ? DESCENDING : ASCENDING;
+			else
+				even_odd_orientation = (row % 2 == 0) ? ASCENDING : DESCENDING;
 
 		}
 		else	//	odd iteration
@@ -28,9 +35,9 @@ void shearsort(int num_proc, int row, int col, Cuboid* my_data, MPI_Datatype dat
 			location 	= row;		//	process location in this column
 			MPI_Cart_shift(comm, 0, 1, &left, &right);
 
-			orientation	= ASCENDING;
+			even_odd_orientation	= orientation;
 		}
-		odd_even_sort(dim, location, left, right, orientation, my_data, data_type, comm);
+		odd_even_sort(dim, location, left, right, even_odd_orientation, my_data, data_type, comm);
 	}
 }
 

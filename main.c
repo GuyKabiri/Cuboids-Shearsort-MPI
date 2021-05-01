@@ -39,8 +39,6 @@ int main(int argc, char* argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);		//	get process rank
 	MPI_Comm_size(MPI_COMM_WORLD, &num_processes);	//	get number of processes
 
-	int dim = sqrt(num_processes);
-
 	Cuboid* arr = NULL;
 	Cuboid my_cuboid;	//	cuboid struct for each process
 	int size = 0;		//	size of array
@@ -77,25 +75,37 @@ int main(int argc, char* argv[])
 			MPI_Abort(MPI_COMM_WORLD, 2);
 			exit(-1);
 		}
-
-		print_cuboids_arr_as_mat(arr, dim, dim);
-		printf("\n");
 	}
+
+	//	broadcast the size to all processes so they could send it to `MPI_Dims_create`
+	MPI_Bcast(&size, 1, MPI_INT, ROOT, MPI_COMM_WORLD);
+
+	//	broadcast the orientation to all processess
+	MPI_Bcast(&order, 1, MPI_INT, ROOT, MPI_COMM_WORLD);
+	Orientation orientation = order;
 
 	//	ROOT process send the array of cubiods to children (one for each)
 	MPI_Scatter(arr, 1, mpi_cuboid_type, &my_cuboid, 1, mpi_cuboid_type, ROOT, MPI_COMM_WORLD);
 
 	//	initiate cartesian coordinates
-	int dims[] = { dim, dim };
-	int periods[] = { 0, 0 };
+	int dims[NUM_DIMS] = { 0 };
+	int periods[NUM_DIMS] = { 0 };
 	MPI_Comm comm_2d;
+	MPI_Dims_create(size, NUM_DIMS, dims);
 	MPI_Cart_create(MPI_COMM_WORLD, NUM_DIMS, dims, periods, 0, &comm_2d);
 
 	int my_coords[] = { 0, 0 };		//	store coordinates of each process
 	MPI_Cart_coords(comm_2d, my_rank, NUM_DIMS, my_coords);
 
+	if (my_rank == 0)
+	{
+		printf("Before sorting:\n");
+		print_cuboids_arr_as_mat(arr, dims[0], dims[1]);
+		printf("\n");
+	}
+
 	//perform shearsort of the cuboids array
-	shearsort(num_processes, my_coords[0], my_coords[1], &my_cuboid, mpi_cuboid_type, comm_2d);
+	shearsort(num_processes, my_coords[0], my_coords[1], &my_cuboid, orientation, mpi_cuboid_type, comm_2d);
 
 	//	Gather back all the cuboids to the ROOT process
 	MPI_Gather(&my_cuboid, 1, mpi_cuboid_type, arr, 1, mpi_cuboid_type, ROOT, MPI_COMM_WORLD);
@@ -117,7 +127,8 @@ int main(int argc, char* argv[])
 		//	collect the values by snake shape
 		collect_values(sorted, arr, num_processes, comm_2d);
 
-		print_cuboids_arr_as_mat(arr, dim, dim);
+		printf("After sorting:\n");
+		print_cuboids_arr_as_mat(arr, dims[0], dims[1]);
 		printf("\n");
 
 		printf("The sorted array:\n");
