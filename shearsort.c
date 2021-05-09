@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #include <string.h>
 #include <math.h>
 #include "shearsort.h"
