@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #ifndef __SHEARSORT_H__
 #define __SHEARSORT_H__
 
