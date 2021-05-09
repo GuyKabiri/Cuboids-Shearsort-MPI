@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #ifndef __CUBOID_H__
 #define __CUBOID_H__
 
