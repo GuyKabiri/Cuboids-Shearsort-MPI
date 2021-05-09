@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #ifndef __ODD_EVEN_SORT_H__
 #define __ODD_EVEN_SORT_H__
 
