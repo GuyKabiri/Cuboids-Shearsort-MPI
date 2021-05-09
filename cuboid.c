@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #include "cuboid.h"
 
 //	read cuboids from a file
