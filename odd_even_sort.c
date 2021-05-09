@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #include "odd_even_sort.h"
 
 //	if process is in the edge of the array, it's neighbor should be a negative number
