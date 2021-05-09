@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
