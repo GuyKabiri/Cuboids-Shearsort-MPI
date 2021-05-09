@@ -1,6 +1,3 @@
-//	Guy Kabiri
-//	312252224
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
