@@ -10,7 +10,14 @@ The cuboids are being sorted by the volume of each, or by the width if the volum
 Each process gets a cuboid by `MPI_Scatter` and returns its value in the end of the algorithm with `MPI_Gather`.
 
 ##  Shearsort Iterations
-This algorithm sorting an array of `nXn` values with `nXn` processes after $log(n)$ iterations, each iteration is $O(n)$ complexity, (in this case $n=\sqrt{n}$) so the final complexity time is $O(\sqrt{n}log(n))$.
+This algorithm sorting an array of `nXn` values with `nXn` processes after 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\inline&space;log(n)" title="\inline log(n)" /> 
+iterations, each iteration is 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\inline&space;O(n)" title="\inline O(n)" /> 
+complexity, (in this case 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\inline&space;n=\sqrt{n}" title="\inline n=\sqrt{n}" /> 
+) so the final complexity time is 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\inline&space;O(\sqrt{n}log(n))" title="\inline O(\sqrt{n}log(n))" />.
 
 ### Initial
 The processes are cartesian ordered by `MPI_Cart_create`.
@@ -64,7 +71,8 @@ All that left is to collect the values by a snake shape.
 
 
 ##  Odd-Even Sort Iterations
-This algorithm sorting an array of `n` values with `n` processes after `n` iterations. Complexity time $O(n)$
+This algorithm sorting an array of `n` values with `n` processes after `n` iterations. Complexity time 
+<img src="https://latex.codecogs.com/png.image?\dpi{110}&space;\inline&space;O(n)" title="\inline O(n)" />.
 ### Initial
 The initial array will be as below.
 
